@@ -40,11 +40,11 @@ public class SecurityConfig {
               .and()
               .authorizeHttpRequests(auth -> auth
                       .requestMatchers(
-//                              "/cinepick/my/**",
-//                              "/swagger-ui/**",
-//                              "/v3/api-docs/**",
-//                              "/swagger-resources/**",
-//                              "/webjars/**"
+                              "/cinepick/my/**",
+                              "/swagger-ui/**",
+                              "/v3/api-docs/**",
+                              "/swagger-resources/**",
+                              "/webjars/**",
                               "/**"
                       ).permitAll() // 회원가입, 로그인, Swagger 관련 경로는 인증 없이 접근 허용
                       .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요

@@ -3,7 +3,7 @@ package com.example.cinepick_be.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
+@Entity(name="movie_like")
 @Data
 public class Like {
    @Id

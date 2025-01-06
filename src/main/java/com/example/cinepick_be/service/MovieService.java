@@ -1,21 +1,17 @@
 package com.example.cinepick_be.service;
 
 import com.example.cinepick_be.dto.*;
-import com.example.cinepick_be.entity.Comment;
-import com.example.cinepick_be.entity.Movie;
-import com.example.cinepick_be.entity.Recommend;
-import com.example.cinepick_be.entity.User;
-import com.example.cinepick_be.repository.CommentRepository;
-import com.example.cinepick_be.repository.MovieRepository;
-import com.example.cinepick_be.repository.RecommendRepository;
-import com.example.cinepick_be.repository.UserRepository;
+import com.example.cinepick_be.entity.*;
+import com.example.cinepick_be.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +22,7 @@ public class MovieService {
    private final MovieRepository movieRepository;
    private final CommentRepository commentRepository;
    private final RecommendRepository recommendRepository;
+   private final GenreRepository genreRepository;
 
    @Value("${kmdb.api.url}") // KMDb API URL을 application.properties에 설정
    private String kmdbApiUrl;
@@ -48,7 +45,15 @@ public class MovieService {
                movie.setTitle(movieDto.getTitle());
                movie.setImageUrl(movieDto.getImageUrl());
                movie.setPlot(movieDto.getPlot());
-               movie.setGenre(movieDto.getGenre());
+               Set<Genre> genres = new HashSet<>();
+               if (movieDto.getGenre() != null) {
+                  String[] genreNames = movieDto.getGenre().split(",");
+                  for (String genreName : genreNames) {
+                     Genre genre = genreRepository.findByName(genreName.trim());
+                     genres.add(genre);
+                  }
+               }
+               movie.setGenres(genres);
 
                movieRepository.save(movie);  // 데이터베이스에 저장
             }
@@ -65,7 +70,7 @@ public class MovieService {
       Movie movie = movieRepository.findById(movieId)
               .orElseThrow(()-> new IllegalArgumentException("영화가 존재하지 않습니다."));
 
-      MovieDTO movieDTO= new MovieDTO(movie.getTitle(), movie.getImageUrl(), movie.getPlot(), movie.getGenre());
+      MovieDTO movieDTO= new MovieDTO(movie.getTitle(), movie.getImageUrl(), movie.getPlot(), movie.getGenres().toString());
 
       List<Comment> comments = commentRepository.findByMovie(movie);
       List<CommentDTO> commentDTOs= comments.stream()

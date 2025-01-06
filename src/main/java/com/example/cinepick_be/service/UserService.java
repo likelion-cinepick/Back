@@ -8,7 +8,6 @@ import com.example.cinepick_be.repository.LikeRepository;
 import com.example.cinepick_be.repository.MbtiRepository;
 import com.example.cinepick_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,9 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class   UserService implements UserDetailsService {
+public class UserService implements UserDetailsService {
    private final UserRepository userRepository;
-   private final LikeRepository likeRepository;
    private final MbtiRepository mbtiRepository;
 
    public User register(RegisterDTO user){
@@ -46,10 +44,12 @@ public class   UserService implements UserDetailsService {
    public Boolean checkUserId(String userId){
       return !userRepository.existsByUserId(userId);
    }
-   public void addNick(NickDTO nickDTO){
+   public User addNick(NickDTO nickDTO){
       User user = userRepository.findByUserId(nickDTO.getUserId())
               .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
       user.setNickname(nickDTO.getNickname());
+
+      return userRepository.save(user);
 
    }
 
@@ -70,10 +70,12 @@ public class   UserService implements UserDetailsService {
       return userRepository.save(user);
    }
 
-   public void addMood(MoodDTO moodDTO){
+   public User addMood(MoodDTO moodDTO){
       User user = userRepository.findByUserId(moodDTO.getUserId())
               .orElseThrow(()-> new IllegalArgumentException());
       user.setMoodList(moodDTO.getMood());
+
+      return userRepository.save(user);
    }
 
    public UserDTO MyPage(String userId){
@@ -103,7 +105,7 @@ public class   UserService implements UserDetailsService {
    }
 
 
-   @Value("${profile.image.default.dir}")
+   @Value("${file.upload-dir}")
    private String imageDir;  // MBTI 유형에 맞는 이미지를 저장한 디렉토리
 
    public User updateUserWithMbti(String userId, String mbtiType) {
@@ -133,5 +135,10 @@ public class   UserService implements UserDetailsService {
 
       // 프로필 이미지 URL을 반환
       return imageUrl;
+   }
+   public Mbti getMbtiByUserId(String userId) {
+      User user = userRepository.findByUserId(userId)
+              .orElseThrow(() -> new RuntimeException());
+      return user.getMbti();
    }
 }

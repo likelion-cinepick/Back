@@ -17,7 +17,7 @@ public class Mbti {
 
    private String profileImage;
 
-   private String character;
+   private String person;
 
    private String quote;
 
@@ -30,5 +30,6 @@ public class Mbti {
    private String story;
 
    @OneToMany
+   @JoinColumn(name = "mbti_id")
    private List<Movie> recommend = new ArrayList<>();
 }

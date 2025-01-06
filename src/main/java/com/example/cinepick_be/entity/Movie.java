@@ -39,4 +39,9 @@ public class Movie {
 
    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
    private List<Comment> comment;
+
+   @ManyToOne
+   @JoinColumn(name = "mbti_id")
+   private Mbti mbti;
+
 }

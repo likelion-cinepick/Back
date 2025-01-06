@@ -41,7 +41,7 @@ public class LikeService {
       Movie movie = movieRepository.findById(movieId)
               .orElseThrow(() -> new IllegalArgumentException());
 
-      Optional<Like> existLike= likeRepository.findByLike(user,movie);
+      Optional<Like> existLike= likeRepository.findByUserAndMovie(user,movie);
       if(existLike.isPresent()){
          likeRepository.delete(existLike.get());
       }else{
