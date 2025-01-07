@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface LikeRepository extends JpaRepository<Like, Long> {
    List<Like> findByUser(User user);
    Optional<Like> findByUserAndMovie(User user, Movie movie);
+//   Boolean existByUserAndMovie(Like like);
 }

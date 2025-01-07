@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecommendDTO {
-   private Long id;
+   private Long recommendId;
    private String content;
    private String userId;
    private Long movieId;
@@ -19,7 +19,7 @@ public class RecommendDTO {
 
    //엔티티를 dto로 변환
    public RecommendDTO(Recommend recommend) {
-      this.id = recommend.getId();
+      this.recommendId = recommend.getId();
       this.content = recommend.getContent();
       this.userId = recommend.getUser().getUserId();  // User 객체에서 userId 추출
       this.movieId = recommend.getMovie().getId();  // Movie 객체에서 movieId 추출

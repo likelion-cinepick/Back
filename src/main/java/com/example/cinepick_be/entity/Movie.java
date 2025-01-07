@@ -1,5 +1,6 @@
 package com.example.cinepick_be.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class Movie {
 
    @ManyToOne
    @JoinColumn(name = "mbti_id")
+   @JsonManagedReference
    private Mbti mbti;
 
 }

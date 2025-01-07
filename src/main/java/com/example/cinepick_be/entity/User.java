@@ -1,5 +1,6 @@
 package com.example.cinepick_be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(name = "\"user\"")
 public class User {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -23,7 +25,8 @@ public class User {
    private String nickname;
 
    @ManyToOne
-   @JoinColumn(name="name_id")
+   @JoinColumn(name="mbti_id")
+   @JsonIgnore
    private Mbti mbti;
 
    private String profileImageUrl;

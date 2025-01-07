@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LikeDTO {
    private Long id;
-   private Long user;
+   private String user;
    private Long movie;
 
    //엔티티를 eto로 변환
-   public LikeDTO(Long user, Long movie) {
+   public LikeDTO(String user, Long movie) {
       this.user= user;
       this.movie= movie;
    }

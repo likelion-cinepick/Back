@@ -9,6 +9,7 @@ import com.example.cinepick_be.repository.MovieRepository;
 import com.example.cinepick_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,12 +31,12 @@ public class LikeService {
       List<Like> likes= likeRepository.findByUser(user);
 
       return likes.stream().map(like-> new LikeDTO(
-              like.getUser().getId(),
+              like.getUser().getUserId(),
               like.getMovie().getId()
       )).collect(Collectors.toList());
    }
 
-   public void addOrRemoveLike(String userId, Long movieId){
+   public ResponseEntity<String> addOrRemoveLike(String userId, Long movieId){
       User user =userRepository.findByUserId(userId)
               .orElseThrow(()-> new IllegalArgumentException());
       Movie movie = movieRepository.findById(movieId)
@@ -44,10 +45,28 @@ public class LikeService {
       Optional<Like> existLike= likeRepository.findByUserAndMovie(user,movie);
       if(existLike.isPresent()){
          likeRepository.delete(existLike.get());
+         return ResponseEntity.ok("좋아요가 취소되었습니다.");
       }else{
          Like like =new Like();
          like.setUser(user);
          like.setMovie(movie);
+         likeRepository.save(like);
+         return ResponseEntity.ok("좋아요가  추가되었습니다");
       }
    }
+
+//   public boolean addLike(Long movieId, String userId) {
+//      Movie movie = movieRepository.findById(movieId)
+//            .orElseThrow(() -> new IllegalArgumentException());
+//      User user = userRepository.findByUserId(userId)
+//            .orElseThrow(()-> new IllegalArgumentException());
+//      Like like = new Like();
+//      like.setMovie(movie);
+//      like.setUser(user);
+//      if(!likeRepository.existByUserAndMovie(like)) {
+//         likeRepository.save(like);
+//         return true;
+//      }else return false;
+//
+//   }
 }

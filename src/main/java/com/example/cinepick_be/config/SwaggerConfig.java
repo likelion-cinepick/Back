@@ -1,16 +1,23 @@
 package com.example.cinepick_be.config;
-import org.springframework.context.annotation.Bean;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@OpenAPIDefinition(
+      info = @Info(title = "API Documentation", version = "v1"),
+      security = @SecurityRequirement(name = "bearerAuth"),
+      servers = @Server(url = "http://localhost:8080") // API 서버 URL
+)
+@SecurityScheme(
+      name = "bearerAuth",
+      type = SecuritySchemeType.HTTP,
+      scheme = "bearer",
+      bearerFormat = "JWT"
+)
 public class SwaggerConfig {
-
-//   @Bean
-//   public OpenAPI openAPI() {
-//      return new OpenAPI()
-//              .info(new Info()
-//                      .title("회원가입 API")
-//                      .description("Spring Boot 회원가입 API 문서입니다.")
-//                      .version("1.0.0"));
-//   }
 }

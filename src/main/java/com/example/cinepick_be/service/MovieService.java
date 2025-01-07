@@ -61,10 +61,20 @@ public class MovieService {
       }
    }
 
-   public List<Movie> getAllMovies() {
-      return movieRepository.findAll();  // DB에서 모든 영화 목록 가져오기
-   }
+   public List<MovieDTO> getAllMovies() {
+      List<Movie> movies = movieRepository.findAll();
 
+      return movies.stream().map(this::convertToDto)
+            .collect(Collectors.toList());
+   }
+   private MovieDTO convertToDto(Movie movie) {
+      MovieDTO movieDTO = new MovieDTO();
+      movieDTO.setTitle(movie.getTitle());
+      movieDTO.setImageUrl(movie.getImageUrl());
+      movieDTO.setPlot(movie.getPlot());
+
+      return movieDTO;
+   }
    //영화 상세 페이지
    public MovieDetailResponseDTO getMovieDetails(Long movieId){
       Movie movie = movieRepository.findById(movieId)
@@ -107,6 +117,7 @@ public class MovieService {
       Comment comment = new Comment();
       comment.setUser(user);
       comment.setMovie(movie);
+      comment.setContent(commentDTO.getContent());
 
       commentRepository.save(comment);
    }
@@ -137,6 +148,7 @@ public class MovieService {
       Recommend recommend= new Recommend();
       recommend.setUser(user);
       recommend.setMovie(movie);
+      recommend.setContent(recommendDTO.getContent());
 
       recommendRepository.save(recommend);
 

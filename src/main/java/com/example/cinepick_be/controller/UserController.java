@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.NoSuchAlgorithmException;
@@ -32,21 +31,21 @@ public class UserController {
       userService.register(registerDTO);
       return ResponseEntity.ok("계정 생성");
    }
-   @GetMapping("/checkId")
-   public String checkUserId(@RequestParam UserDTO userDTO){
-      boolean isAvalilable = userService.checkUserId(userDTO.getUserId());
+   @PostMapping("/checkId")
+   public String checkUserId(@RequestParam String userId){
+      boolean isAvalilable = userService.checkUserId(userId);
       if(isAvalilable)
          return "사용 가능한 아이디 입니다.";
       else return "이미 존재하는 아이디 입니다.";
    }
-   @PostMapping("/nicknmae")
+   @PostMapping("/nickname")
    public ResponseEntity<String> addNick(@RequestBody NickDTO nickDTO){
       userService.addNick(nickDTO);
       return ResponseEntity.ok(nickDTO.getNickname());
    }
 
    @PostMapping("/mbti")
-   public ResponseEntity<String> addMbti(@RequestBody String userId,@RequestBody String mbti){
+   public ResponseEntity<String> addMbti(@RequestParam String userId,@RequestParam String mbti){
       userService.addMbti(userId, mbti);
       return ResponseEntity.ok(mbti);
    }

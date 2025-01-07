@@ -1,34 +1,37 @@
 package com.example.cinepick_be.controller;
 
-import com.example.cinepick_be.dto.CommentDTO;
-import com.example.cinepick_be.dto.MovieDetailResponseDTO;
-import com.example.cinepick_be.dto.RecommendDTO;
+import com.example.cinepick_be.dto.*;
 import com.example.cinepick_be.entity.Comment;
+import com.example.cinepick_be.entity.Like;
 import com.example.cinepick_be.entity.Movie;
+import com.example.cinepick_be.entity.User;
+import com.example.cinepick_be.service.LikeService;
 import com.example.cinepick_be.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("/cinepick/movies")
 @RequiredArgsConstructor
 public class MovieController {
 
    private final MovieService movieService;
+   private final LikeService likeService;
 
    @PostMapping("/fetch")
    public ResponseEntity<String> fetchMovies() {
       movieService.saveMoviesFromApi();
-      return ResponseEntity.ok("Movies have been fetched and saved to the database.");
+      return ResponseEntity.ok("영화 API 디비에 저장");
    }
 
    @GetMapping("/all")
-   public ResponseEntity<List<Movie>> getAllMovies() {
-      List<Movie> movies = movieService.getAllMovies();
+   public ResponseEntity<List<MovieDTO>> getAllMovies() {
+      List<MovieDTO> movies = movieService.getAllMovies();
       return ResponseEntity.ok(movies);
    }
    //영화 상세 페이지
@@ -88,5 +91,22 @@ public class MovieController {
    ){
       List<RecommendDTO> recommendDTOS= movieService.recommends(movieId);
       return ResponseEntity.ok(recommendDTOS);
+   }
+
+   //영화 상세 페이지에서 좋아요 추가
+   @PostMapping("/{movieId}/like")
+   public void addLike(@PathVariable Long movieId, Authentication authentication){
+      String userId = authentication.getName();
+
+      likeService.addOrRemoveLike(userId, movieId);
+   }
+   //영화 상세 페이지에서 좋아요 삭제
+   @DeleteMapping("/{movieId}/like/delete")
+   public ResponseEntity<Void> deleteLike(
+         Authentication authentication,
+         @PathVariable Long movieId){
+      String userId = authentication.getName();
+      likeService.addOrRemoveLike(userId, movieId);
+      return ResponseEntity.noContent().build();
    }
 }

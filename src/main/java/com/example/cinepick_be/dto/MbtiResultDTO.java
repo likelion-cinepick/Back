@@ -9,9 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MoodDTO {
+public class MbtiResultDTO {
    private String userId;
-   private List<String> mood;
-   private String mbti;
-
+   private List<String> mbti;
 }

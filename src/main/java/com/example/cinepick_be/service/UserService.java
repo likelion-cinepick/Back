@@ -1,10 +1,8 @@
 package com.example.cinepick_be.service;
 
 import com.example.cinepick_be.dto.*;
-import com.example.cinepick_be.entity.Like;
 import com.example.cinepick_be.entity.Mbti;
 import com.example.cinepick_be.entity.User;
-import com.example.cinepick_be.repository.LikeRepository;
 import com.example.cinepick_be.repository.MbtiRepository;
 import com.example.cinepick_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,20 +11,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
    private final UserRepository userRepository;
    private final MbtiRepository mbtiRepository;
-
+   private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
    public User register(RegisterDTO user){
       if (!user.isPasswordConfirmed()) {
          throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
@@ -36,8 +33,9 @@ public class UserService implements UserDetailsService {
       }
 
       User newUser = new User();
-      user.setUserId(user.getUserId());
-      user.setPassword(user.getPassword());
+      newUser.setUserId(user.getUserId());
+      String encodedPassword = passwordEncoder.encode(user.getPassword());
+      newUser.setPassword(encodedPassword);
 
       return userRepository.save(newUser);
    }
@@ -62,11 +60,10 @@ public class UserService implements UserDetailsService {
          throw new RuntimeException("MBTI를 찾을 수 없습니다.");
       }
 
-      // 2. 사용자에게 MBTI 정보와 프로필 이미지 설정
-      user.setMbti(mbti);  // MBTI 정보 추가
-      user.setProfileImageUrl(mbti.getProfileImage());  // MBTI에 맞는 프로필 이미지 설정
+      user.setMbti(mbti);
+      user.setProfileImageUrl(mbti.getProfileImage());
 
-      // 3. 업데이트된 사용자 정보 저장
+
       return userRepository.save(user);
    }
 
@@ -88,6 +85,7 @@ public class UserService implements UserDetailsService {
          user.getPassword(),
          user.getNickname(),
          user.getMbti().getMbti(),
+         user.getProfileImageUrl(),
          user.getMoodList()
       );
    }
@@ -108,7 +106,7 @@ public class UserService implements UserDetailsService {
    @Value("${file.upload-dir}")
    private String imageDir;  // MBTI 유형에 맞는 이미지를 저장한 디렉토리
 
-   public User updateUserWithMbti(String userId, String mbtiType) {
+   public UserDTO updateUserWithMbti(String userId, String mbtiType) {
       User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
       Mbti mbti = mbtiRepository.findByMbti(mbtiType);
@@ -121,8 +119,13 @@ public class UserService implements UserDetailsService {
 
       String profileImageFileName = mbtiType.toLowerCase() + ".png"; // 예: enfp.png
       user.setProfileImageUrl(profileImageFileName);
+      userRepository.save(user);
+      UserDTO userDTO= new UserDTO();
+      userDTO.setUserId(user.getUserId());
+      userDTO.setMbti(user.getMbti().getMbti());
+      userDTO.setProfileUrl(user.getProfileImageUrl());
 
-      return userRepository.save(user);
+      return userDTO;
    }
    public String getProfileImageUrl(String userId) {
       // 사용자 정보를 DB에서 가져옴
@@ -139,6 +142,8 @@ public class UserService implements UserDetailsService {
    public Mbti getMbtiByUserId(String userId) {
       User user = userRepository.findByUserId(userId)
               .orElseThrow(() -> new RuntimeException());
+
+
       return user.getMbti();
    }
 }
