@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface MbtiRepository extends JpaRepository<Mbti, Long> {
    Mbti findByMbti(String mbti);
-
+   Optional<Mbti> findById(Long id);
 }

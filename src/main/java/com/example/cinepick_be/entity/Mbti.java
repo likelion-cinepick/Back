@@ -45,5 +45,4 @@ public class Mbti {
    @JoinColumn(name = "mbti_id")
    private List<Movie> recommend = new ArrayList<>();
 
-
 }

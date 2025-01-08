@@ -27,10 +27,15 @@ public class UserController {
    final private AuthenticationManager authenticationManager;
 
    @PostMapping("/register")
-   public ResponseEntity<String> register(@RequestBody RegisterDTO registerDTO){
+   public ResponseEntity<Map<String, String>> register(@RequestBody RegisterDTO registerDTO) {
       userService.register(registerDTO);
-      return ResponseEntity.ok("계정 생성");
+      String jwtToken = jwtTokenProvider.createToken(registerDTO.getUserId());
+      Map<String, String> response = new HashMap<>();
+      response.put("message", "계정 생성 완료");
+      response.put("token", jwtToken);
+      return ResponseEntity.ok(response);
    }
+
    @PostMapping("/checkId")
    public String checkUserId(@RequestParam String userId){
       boolean isAvalilable = userService.checkUserId(userId);
@@ -45,9 +50,9 @@ public class UserController {
    }
 
    @PostMapping("/mbti")
-   public ResponseEntity<String> addMbti(@RequestParam String userId,@RequestParam String mbti){
-      userService.addMbti(userId, mbti);
-      return ResponseEntity.ok(mbti);
+   public ResponseEntity<String> addMbti(@RequestBody UserDTO userDTO){
+      userService.addMbti(userDTO.getUserId(), userDTO.getMbti());
+      return ResponseEntity.ok(userDTO.getMbti());
    }
 
    @PostMapping("/mood")

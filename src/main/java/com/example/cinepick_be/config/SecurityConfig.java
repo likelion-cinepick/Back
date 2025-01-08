@@ -41,6 +41,7 @@ public class SecurityConfig {
               .authorizeHttpRequests(auth -> auth
                       .requestMatchers(
                               "/cinepick/my/**",
+                              "image/**",
                               "/swagger-ui/**",
                               "/v3/api-docs/**",
                               "/swagger-resources/**",
