@@ -13,6 +13,7 @@ public class Genre {
    @GeneratedValue(strategy= GenerationType.IDENTITY)
    private Long id;
 
+   @Column(unique = true)
    private String name;
 
    @ManyToMany
@@ -23,4 +24,7 @@ public class Genre {
    )
    private Set<Mood> moods = new HashSet<>();
 
+   public Genre(String name) {
+      this.name = name;
+   }
 }

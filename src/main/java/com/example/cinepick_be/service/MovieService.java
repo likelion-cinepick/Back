@@ -3,12 +3,21 @@ package com.example.cinepick_be.service;
 import com.example.cinepick_be.dto.*;
 import com.example.cinepick_be.entity.*;
 import com.example.cinepick_be.repository.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,39 +33,184 @@ public class MovieService {
    private final RecommendRepository recommendRepository;
    private final GenreRepository genreRepository;
 
-   @Value("${kmdb.api.url}") // KMDb API URL을 application.properties에 설정
-   private String kmdbApiUrl;
+//   @Value("${kmdb.api.url}")
+//   private String kmdbApiUrl;
+   //   public MovieDTO getMovieDetails(String movieCd) {
+//      RestTemplate restTemplate = new RestTemplate();
+//
+//      // API 요청 URL 생성
+//      String requestUrl = API_URL + "?key=" + API_KEY + "&movieCd=" + movieCd;
+//
+//      // API 호출
+//      String response = restTemplate.getForObject(requestUrl, String.class);
+//
+//      // JSON 파싱
+//      JSONObject jsonResponse = new JSONObject(response);
+//      JSONObject movieInfo = jsonResponse.getJSONObject("movieInfoResult").getJSONObject("movieInfo");
+//
+//      // 데이터 추출
+//      String title = movieInfo.getString("movieNm");
+//      String plot = movieInfo.optString("plot", "줄거리 없음");
+//      String poster = movieInfo.optString("posters", "포스터 없음");
+//
+//      // 장르 처리
+//      JSONArray genresArray = movieInfo.getJSONArray("genres");
+//      StringBuilder genres = new StringBuilder();
+//      for (int i = 0; i < genresArray.length(); i++) {
+//         if (i > 0) genres.append(", ");
+//         genres.append(genresArray.getJSONObject(i).getString("genreNm"));
+//      }
+//
+//      // DTO 반환
+//      return new MovieDTO(title, poster, plot, genres.toString());
+//   }
+//   public void fetchAndSaveMovies() {
+//      int batchSize = 100; // 한번에 처리할 데이터 개수
+//      int page = 1;
+//      int totalFetched = 0;
+//
+//      while (totalFetched < 3000) {
+//         String url = API_URL + "?key=" + API_KEY + "&page=" + page;
+//         ResponseEntity<ApiResponse> response = restTemplate.exchange(
+//               url, HttpMethod.GET, null, new ParameterizedTypeReference<ApiResponse>() {});
+//
+//         if (response.getBody() == null || response.getBody().getClass() == null) {
+//            break;
+//         }
+//
+//         List<MovieDTO> movies = (List<MovieDTO>) response.getBody();
+//         saveMovies(movies);
+//
+//         totalFetched += movies.size();
+//         page++;
+//         if (movies.size() < batchSize) {
+//            break; // 더 이상 가져올 데이터가 없으면 중단
+//         }
+//      }
+//   }
+   //   public void saveMoviesFromApi() {
+//      String url = kmdbApiUrl + "/movies?count=1000";  // API URL 및 쿼리 파라미터 예시
+//
+//      // KMDb API에서 영화 리스트 가져오기
+//      MovieDTO[] movieDtos = restTemplate.getForObject(url, MovieDTO[].class);
+//
+//      // 가져온 데이터 DB에 저장
+//      if (movieDtos != null) {
+//         for (MovieDTO movieDto : movieDtos) {
+//            boolean exists = movieRepository.existsByTitle(movieDto.getTitle());
+//            if (!exists) {
+//               Movie movie = new Movie();
+//               movie.setTitle(movieDto.getTitle());
+//               movie.setImageUrl(movieDto.getImageUrl());
+//               movie.setPlot(movieDto.getPlot());
+//               Set<Genre> genres = new HashSet<>();
+//               if (movieDto.getGenre() != null) {
+//                  String[] genreNames = movieDto.getGenre().split(",");
+//                  for (String genreName : genreNames) {
+//                     Genre genre = genreRepository.findByName(genreName)
+//                           .orElseGet(() -> genreRepository.save(new Genre(genreName)));
+//                     genres.add(genre);
+//                  }
+//               }
+//               movie.setGenres(genres);
+//
+//               movieRepository.save(movie);  // 데이터베이스에 저장
+//            }
+//         }
+//      }
+//   }
 
-   private final RestTemplate restTemplate;  // RestTemplate 객체를 주입받기
+   private final RestTemplate restTemplate;
 
-   // KMDb API에서 1000개 영화 정보 가져오기
-   public void saveMoviesFromApi() {
-      String url = kmdbApiUrl + "/movies?count=1000";  // API URL 및 쿼리 파라미터 예시
+   private static final String API_URL = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json";
+   private static final String API_KEY = "0674387425b773a2e93c101d3eff771e";
 
-      // KMDb API에서 영화 리스트 가져오기
-      MovieDTO[] movieDtos = restTemplate.getForObject(url, MovieDTO[].class);
+   // DB에 저장
+   private void saveMovies(List<MovieDTO> movieDTOs) {
+      for (MovieDTO dto : movieDTOs) {
+         if (!movieRepository.existsByTitle(dto.getTitle())) {
+            Movie movie = new Movie();
+            movie.setTitle(dto.getTitle());
+            movie.setImageUrl(dto.getImageUrl());
+            movie.setPlot(dto.getPlot());
 
-      // 가져온 데이터 DB에 저장
-      if (movieDtos != null) {
-         for (MovieDTO movieDto : movieDtos) {
-            boolean exists = movieRepository.existsByTitle(movieDto.getTitle());
-            if (!exists) {
-               Movie movie = new Movie();
-               movie.setTitle(movieDto.getTitle());
-               movie.setImageUrl(movieDto.getImageUrl());
-               movie.setPlot(movieDto.getPlot());
-               Set<Genre> genres = new HashSet<>();
-               if (movieDto.getGenre() != null) {
-                  String[] genreNames = movieDto.getGenre().split(",");
-                  for (String genreName : genreNames) {
-                     Genre genre = genreRepository.findByName(genreName.trim());
-                     genres.add(genre);
-                  }
-               }
-               movie.setGenres(genres);
-
-               movieRepository.save(movie);  // 데이터베이스에 저장
+            String[] genreNames = dto.getGenre().split(",");
+            Set<Genre> genres = new HashSet<>();
+            for (String genreName : genreNames) {
+               Genre genre = genreRepository.findByName(genreName.trim())
+                     .orElseGet(() -> genreRepository.save(new Genre(genreName.trim())));
+               genres.add(genre);
             }
+            movie.setGenres(genres);
+
+            movieRepository.save(movie);
+         }
+      }
+   }
+
+   //특정 영화 상세 정보 가져오기
+   public MovieDTO getMovieDetails(String movieCd) {
+      String requestUrl = API_URL + "?key=" + API_KEY + "&movieCd=" + movieCd;
+      String response = restTemplate.getForObject(requestUrl, String.class);
+
+      JSONObject jsonResponse = new JSONObject(response);
+      JSONObject movieInfo = jsonResponse.getJSONObject("movieInfoResult").getJSONObject("movieInfo");
+
+      String title = movieInfo.getString("movieNm");
+      String plot = movieInfo.optString("plot", "줄거리 없음");
+      String poster = movieInfo.optString("posters", "포스터 없음");
+
+      JSONArray genresArray = movieInfo.getJSONArray("genres");
+      StringBuilder genres = new StringBuilder();
+      for (int i = 0; i < genresArray.length(); i++) {
+         if (i > 0) genres.append(", ");
+         genres.append(genresArray.getJSONObject(i).getString("genreNm"));
+      }
+
+      return new MovieDTO(title, poster, plot, genres.toString());
+   }
+
+   // 영화진흥위원회 API에서 영화 목록 가져와서 저장
+   public void fetchAndSaveMovies() {
+      int page = 1;
+      int totalFetched = 0;
+      final int maxMovies = 3000;
+      final int batchSize = 100;
+
+      while (totalFetched < maxMovies) {
+         // 올바른 API URL 사용
+         String url = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?key=" + API_KEY + "&curPage=" + page;
+
+         try {
+            String response = restTemplate.getForObject(url, String.class);
+            System.out.println("API Response: " + response);  // 응답 확인용 출력
+
+            JSONObject jsonResponse = new JSONObject(response);
+            // movieListResult 확인
+            if (jsonResponse.has("movieListResult")) {
+               JSONObject movieListResult = jsonResponse.getJSONObject("movieListResult");
+               JSONArray moviesArray = movieListResult.getJSONArray("movieList");
+
+               List<MovieDTO> movieDTOs = new ArrayList<>();
+               for (int i = 0; i < moviesArray.length(); i++) {
+                  JSONObject movie = moviesArray.getJSONObject(i);
+                  String movieCd = movie.getString("movieCd");
+                  MovieDTO movieDTO = getMovieDetails(movieCd);
+                  movieDTOs.add(movieDTO);
+               }
+
+               saveMovies(movieDTOs);
+
+               totalFetched += movieDTOs.size();
+               page++;
+               if (movieDTOs.size() < batchSize) break; // 더 이상 데이터가 없으면 중단
+            } else {
+               System.out.println("Error: movieListResult not found in response.");
+               break;
+            }
+         } catch (Exception e) {
+            System.err.println("Error fetching movies on page " + page + ": " + e.getMessage());
+            break;
          }
       }
    }

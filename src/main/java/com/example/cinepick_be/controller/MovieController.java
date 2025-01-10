@@ -9,6 +9,7 @@ import com.example.cinepick_be.service.LikeService;
 import com.example.cinepick_be.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,13 @@ public class MovieController {
 
    @PostMapping("/fetch")
    public ResponseEntity<String> fetchMovies() {
-      movieService.saveMoviesFromApi();
-      return ResponseEntity.ok("영화 API 디비에 저장");
+      try {
+         movieService.fetchAndSaveMovies();
+         return ResponseEntity.ok("Movies fetched and saved successfully.");
+      } catch (Exception e) {
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+               .body("Error while fetching movies: " + e.getMessage());
+      }
    }
 
    @GetMapping("/all")
