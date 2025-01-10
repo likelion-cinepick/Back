@@ -20,12 +20,16 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cinepick")
+@RequestMapping()
 public class UserController {
    final private UserService userService;
    final private JwtTokenProvider jwtTokenProvider;
    final private AuthenticationManager authenticationManager;
 
+   @GetMapping("/")
+   public String main(){
+      return "index";
+   }
    @PostMapping("/register")
    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterDTO registerDTO) {
       userService.register(registerDTO);

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/cinepick/my/like")
+@RequestMapping("/my/like")
 @RequiredArgsConstructor
 public class LikeController {
    private final LikeService likeService;

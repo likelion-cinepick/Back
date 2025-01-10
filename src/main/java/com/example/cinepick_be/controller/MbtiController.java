@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 
 
 @RestController
-@RequestMapping("/cinepick/test")
+@RequestMapping("/test")
 @RequiredArgsConstructor
 public class MbtiController {
 
