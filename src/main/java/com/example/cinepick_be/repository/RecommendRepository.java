@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface RecommendRepository extends JpaRepository<Recommend, Long> {
    Optional<Recommend> findById(Long id);
 
-   List<Recommend> findByMovie(Movie movie);
+   List<Recommend> findByMovieId(Long id);
 }

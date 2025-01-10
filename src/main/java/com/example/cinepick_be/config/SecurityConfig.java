@@ -14,6 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -35,23 +39,37 @@ public class SecurityConfig {
    @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       http
-              .csrf(csrf -> csrf.disable())
-              .cors() // CORS 활성화
-              .and()
-              .authorizeHttpRequests(auth -> auth
-                      .requestMatchers(
-                              "/cinepick/my/**",
-                              "image/**",
-                              "/swagger-ui/**",
-                              "/v3/api-docs/**",
-                              "/swagger-resources/**",
-                              "/webjars/**",
-                              "/**"
-                      ).permitAll() // 회원가입, 로그인, Swagger 관련 경로는 인증 없이 접근 허용
-                      .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
-              )
-              .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                  .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**",
+                        "/register/**", "/login/**"
+                        ,"/image/**"
+                        ,"/movies/all"
+                  ).permitAll()
+                  .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+            .cors(withDefaults()); // CORS 설정 적용
+
       return http.build();
+   }
+
+   @Bean
+   public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+      CorsConfiguration configuration = new CorsConfiguration();
+      configuration.addAllowedOriginPattern("*"); // 모든 도메인 허용
+      configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
+      configuration.addAllowedHeader("*"); // 모든 헤더 허용
+      configuration.setAllowCredentials(true); // 인증 정보 허용
+
+      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+      source.registerCorsConfiguration("/**", configuration);
+
+      return source; // 바로 반환
    }
 
    @Bean

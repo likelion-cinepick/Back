@@ -13,6 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
    //해당 id 댓글 조회
    Optional<Comment> findById(Long id);
 
-   //특정 영화의 모든 댓글 조회
-   List<Comment> findByMovie(Movie movie);
+
+   List<Comment> findByMovieId(Long movieId);
 }

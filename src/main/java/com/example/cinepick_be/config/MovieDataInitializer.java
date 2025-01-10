@@ -19,7 +19,7 @@ public class MovieDataInitializer implements CommandLineRunner {
    public void run(String... args) throws Exception {
       System.out.println("Initializing movie database...");
       try {
-         movieService.fetchAndSaveMovies();
+//         movieService.fetchAndSaveMovies();
          System.out.println("Movie database initialized successfully!");
       } catch (Exception e) {
          System.err.println("Error occurred while initializing movie database: " + e.getMessage());

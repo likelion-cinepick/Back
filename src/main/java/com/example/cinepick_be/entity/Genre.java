@@ -2,12 +2,14 @@ package com.example.cinepick_be.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Genre {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -16,7 +18,7 @@ public class Genre {
    @Column(unique = true)
    private String name;
 
-   @ManyToMany
+   @ManyToMany(fetch = FetchType.EAGER)
    @JoinTable(
            name="genre_mood",
            joinColumns = @JoinColumn(name="genre_id"),

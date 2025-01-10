@@ -11,7 +11,10 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
       info = @Info(title = "API Documentation", version = "v1"),
       security = @SecurityRequirement(name = "bearerAuth"),
-      servers = @Server(url = "http://localhost:8080") // API 서버 URL
+      servers = {
+            @Server(url = "http://localhost:8080"), // 로컬 개발 서버 URL
+            @Server(url = "http://3.105.163.214:8080") // 원격 서버 URL
+      }
 )
 @SecurityScheme(
       name = "bearerAuth",

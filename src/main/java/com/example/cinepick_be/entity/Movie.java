@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,9 +23,10 @@ public class Movie {
 
    private String title;
    private String imageUrl;
+   @Lob
    private String plot;
 
-   @ManyToMany(cascade = CascadeType.ALL)
+   @ManyToMany(fetch = FetchType.EAGER)
    @JoinTable(
            name= "movie_genre",
            joinColumns = @JoinColumn(name= "movie_id"),
