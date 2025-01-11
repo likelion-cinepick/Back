@@ -1,5 +1,6 @@
 package com.example.cinepick_be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,13 +27,14 @@ public class Movie {
    @Lob
    private String plot;
 
-   @ManyToMany(fetch = FetchType.EAGER)
+   @ManyToMany(fetch = FetchType.LAZY)
    @JoinTable(
            name= "movie_genre",
            joinColumns = @JoinColumn(name= "movie_id"),
            inverseJoinColumns = @JoinColumn(name="genre_id")
    )
-   private Set<Genre> genres= new HashSet<>();
+   @JsonIgnoreProperties("movies")
+   private List<Genre> genres= new ArrayList<>();
 
    @OneToMany(mappedBy = "movie", cascade= CascadeType.ALL)
    private List<Like> likeList=new ArrayList<>();

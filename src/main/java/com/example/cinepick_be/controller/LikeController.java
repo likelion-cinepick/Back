@@ -15,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LikeController {
    private final LikeService likeService;
-//   private final UserService userService;
    @GetMapping()
    public ResponseEntity<List<LikeDTO>> getLikes(Authentication authentication){
       String userId= authentication.getName();

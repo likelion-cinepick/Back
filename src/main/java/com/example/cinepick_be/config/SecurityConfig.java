@@ -49,6 +49,8 @@ public class SecurityConfig {
                         "/register/**", "/login/**"
                         ,"/image/**"
                         ,"/movies/all"
+                        ,"/uploads/**"
+                        ,"/movies/{movieId}"
                   ).permitAll()
                   .anyRequest().authenticated()
             )
@@ -69,7 +71,7 @@ public class SecurityConfig {
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       source.registerCorsConfiguration("/**", configuration);
 
-      return source; // 바로 반환
+      return source;
    }
 
    @Bean

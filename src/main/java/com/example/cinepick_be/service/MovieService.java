@@ -3,14 +3,8 @@ package com.example.cinepick_be.service;
 import com.example.cinepick_be.dto.*;
 import com.example.cinepick_be.entity.*;
 import com.example.cinepick_be.repository.*;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -50,6 +44,7 @@ public class MovieService {
                System.err.println("API call failed with status: " + response.getStatusCode());
             }
 
+
             System.out.println(url);
 
             if (response.getBody() != null && response.getBody().getResults() != null) {
@@ -63,7 +58,8 @@ public class MovieService {
                   // 장르 처리
                   List<Integer> genreIds = movieDTO.getGenreIds(); // 장르 ID 리스트
                   StringBuilder genreString = new StringBuilder();
-                  Set<Genre> genreSet = new HashSet();
+
+                  List<Genre> genreSet = new ArrayList<>();
                   for (Integer genreId : genreIds) {
                      String genreName = genreMap.get(genreId);  // 장르 이름 가져오기
                      if (genreName != null) {
@@ -93,7 +89,7 @@ public class MovieService {
       } while (hasMorePages);
    }
 
-   private void saveMovie(String title, String imageUrl, Set<Genre> genres, String overview) {
+   private void saveMovie(String title, String imageUrl, List<Genre> genres, String overview) {
 
       Movie movie = new Movie();
 
@@ -103,7 +99,7 @@ public class MovieService {
       movie.setImageUrl(imageUrl); // 포스터 이미지 URL 설정
 
       // 장르 변환 및 설정
-      Set<Genre> genre = genres;
+      List<Genre> genre = genres;
       movie.setGenres(genre);
 
       // 저장
@@ -133,32 +129,55 @@ public class MovieService {
          Map.entry(16, "애니메이션"),
          Map.entry(14, "판타지")
    );
-
+   @Transactional
    public List<MovieDTO> getAllMovies() {
-      List<Movie> movies = movieRepository.findAll(); // DB에서 모든 영화 가져오기
+      List<Object[]> movies = movieRepository.findAllMovieTitlesAndImageUrls();
+      movies.forEach(movie -> System.out.println(Arrays.toString(movie)));
 
       // Entity -> DTO 변환
       return movies.stream()
-            .map(movie -> new MovieDTO(
-                  movie.getTitle(),
-                  movie.getImageUrl(),
-                  movie.getPlot(),
-                  genresToString(movie.getGenres())
-            ))
+            .map(movie -> {
+               String title = (String) movie[0];
+               String imageUrl = (String) movie[1];
+
+               // 이미지 URL을 절대 경로로 수정
+               if (imageUrl != null && !imageUrl.isEmpty()) {
+                  imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
+               }
+
+               System.out.println("Title: " + title + ", Image URL: " + imageUrl);
+               return new MovieDTO(title, imageUrl);
+            })
             .collect(Collectors.toList());
    }
+
    public MovieDetailResponseDTO getMovieDetails(Long movieId) {
-      // 영화 기본 정보 가져오기
       Movie movie = movieRepository.findById(movieId)
             .orElseThrow(() -> new RuntimeException("Movie not found with id " + movieId));
+//      List<CommentDTO> commentList = movie.getComment().stream()
+//            .map(comment -> new CommentDTO(comment.getId(), comment.getContent(), comment.getUser().getUserId(), comment.getMovie().getId(),
+//                  comment.getUpdatedAt()))
+//            .collect(Collectors.toList());
+//      List<RecommendDTO> recommendList= movie.getRecommendList().stream()
+//            .map(recommend -> new RecommendDTO(recommend))
+//            .collect(Collectors.toList());
 
-      // MovieDTO로 변환
-      MovieDTO movieDTO = new MovieDTO(
+      StringBuilder genresString = new StringBuilder();
+      for (Genre genre : movie.getGenres()) {
+         genresString.append(genre.getName()).append(", ");  // 장르 이름을 추가
+      }
+      if (genresString.length() > 0) {
+         genresString.setLength(genresString.length() - 2);  // 마지막 쉼표와 공백 제거
+      }
+      String imageUrl = "http://3.105.163.214:8080/uploads/movies/" + movie.getImageUrl();
+
+      MovieDTO movieDTO= new MovieDTO(
             movie.getTitle(),
-            movie.getImageUrl(),
+            imageUrl,
             movie.getPlot(),
-            genresToString(movie.getGenres())  // 장르를 문자열로 변환
+            genresString.toString()
       );
+
 
       // 댓글 리스트 가져오기
       List<CommentDTO> comments = commentRepository.findByMovieId(movieId)
@@ -186,22 +205,12 @@ public class MovieService {
             .collect(Collectors.toList());
 
       // MovieDetailResponseDTO로 반환
-      MovieDetailResponseDTO response = new MovieDetailResponseDTO();
+      MovieDetailResponseDTO response = new MovieDetailResponseDTO(movie.getTitle(), movie.getImageUrl(), movie.getPlot(), genresString.toString(), comments, recommends);
       response.setMovieDTO(movieDTO);
       response.setComments(comments);
       response.setRecommends(recommends);
 
       return response;
-   }
-
-
-   private String genresToString(Set<Genre> genres) {
-      if (genres == null || genres.isEmpty()) {
-         return "Unknown";  // 장르가 없을 경우 기본값
-      }
-      return genres.stream()
-            .map(Genre::getName)  // Genre 객체에서 이름을 가져옴
-            .collect(Collectors.joining(", "));  // 콤마로 구분된 문자열로 변환
    }
 
 

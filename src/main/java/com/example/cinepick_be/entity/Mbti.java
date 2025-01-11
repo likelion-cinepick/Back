@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
-@JsonIgnoreProperties({"goodChemistry", "badChemistry"})
+@JsonIgnoreProperties({"goodChemistry", "badChemistry","recommend"})
 public class Mbti {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -43,6 +43,7 @@ public class Mbti {
 
    @OneToMany
    @JoinColumn(name = "mbti_id")
+   @JsonManagedReference
    private List<Movie> recommend = new ArrayList<>();
 
 }

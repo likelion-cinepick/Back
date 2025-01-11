@@ -2,6 +2,7 @@ package com.example.cinepick_be.dto;
 
 import com.example.cinepick_be.entity.Mbti;
 import com.example.cinepick_be.entity.Movie;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
@@ -38,6 +39,7 @@ public class MbtiDTO {
    @Lob
    private String story;
 
+   @JsonIgnore
    private List<Movie> recommend = new ArrayList<>();
 
 

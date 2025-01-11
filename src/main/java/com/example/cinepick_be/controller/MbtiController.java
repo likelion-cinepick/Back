@@ -59,27 +59,26 @@ public class MbtiController {
       User user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-      // UserDTO 생성
       UserDTO userDTO = new UserDTO(user);
 
-      // UserDTO의 mbtiType을 가지고 해당하는 Mbti 엔티티 찾기
       Mbti mbti = mbtiRepository.findByMbti(userDTO.getMbti());
 
 
-      // MbtiDTO 생성
       MbtiDTO mbtiDTO = new MbtiDTO();
       mbtiDTO.setMbti(mbti.getMbti());
       mbtiDTO.setPerson(mbti.getPerson());
       mbtiDTO.setQuote(mbti.getQuote());
       mbtiDTO.setDescription(mbti.getDescription());
       mbtiDTO.setStory(mbti.getStory());
-      mbtiDTO.setProfileUrl("/image/"+mbti.getMbti());
+
+      mbtiDTO.setProfileUrl("http://3.105.163.214:8080/uploads/mbti/" + mbti.getProfileImage());
+//      mbtiDTO.setProfileUrl("http://localhost:8080/uploads/mbti/" + mbti.getProfileImage());
+
       mbtiDTO.setGoodChemistry(mbti.getGoodChemistry().getMbti());
       mbtiDTO.setBadChemistry(mbti.getBadChemistry().getMbti());
       mbtiDTO.setRecommend(mbti.getRecommend());
 
       String imageFilePath = mbti.getProfileImage();
-      File imageFile = new File(imageFilePath);
 
       return ResponseEntity.ok(mbtiDTO);
    }

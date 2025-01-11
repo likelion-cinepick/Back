@@ -5,16 +5,14 @@ import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.w3c.dom.Text;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovieDTO {
-   private String title; // 영화 제목
+   private String title; // 제목
    @Lob
    private String overview; // 줄거리
    @JsonProperty("poster_path")
@@ -24,7 +22,18 @@ public class MovieDTO {
 
    private List<String> genres;
 
+   private String genre;
 
-   public MovieDTO(String title, String imageUrl, String plot, String s) {
+
+   public MovieDTO(String title, String imageUrl) {
+      this.title = title;
+      this.posterPath = imageUrl;
+   }
+
+   public MovieDTO(String title, String imageUrl, String plot, String genre) {
+      this.title = title;
+      this.posterPath = imageUrl;
+      this.overview=plot;
+      this.genre= genre;
    }
 }

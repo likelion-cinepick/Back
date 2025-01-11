@@ -1,10 +1,13 @@
 package com.example.cinepick_be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,7 +27,8 @@ public class Genre {
            joinColumns = @JoinColumn(name="genre_id"),
            inverseJoinColumns = @JoinColumn(name="mood_id")
    )
-   private Set<Mood> moods = new HashSet<>();
+   @JsonIgnoreProperties("genres")
+   private List<Mood> moods = new ArrayList<>();
 
    public Genre(String name) {
       this.name = name;

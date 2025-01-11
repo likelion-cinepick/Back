@@ -1,9 +1,12 @@
 package com.example.cinepick_be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,5 +19,6 @@ public class Mood {
    private String keyword;
 
    @ManyToMany(mappedBy = "moods")
-   private Set<Genre> genres= new HashSet<>();
+   @JsonIgnoreProperties("moods")
+   private List<Genre> genres= new ArrayList<>();
 }

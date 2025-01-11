@@ -25,4 +25,5 @@ public class RecommendDTO {
       this.movieId = recommend.getMovie().getId();  // Movie 객체에서 movieId 추출
       this.createdAt = recommend.getCreatedAt();
    }
+
 }

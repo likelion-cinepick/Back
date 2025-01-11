@@ -51,25 +51,33 @@ public class ImageFileController {
 //   }
    @Autowired
    private MbtiRepository mbtiRepository;
-   @CrossOrigin(origins = "http://your-frontend-url")
+   @CrossOrigin(origins = "http://3.105.163.214:3000")
    @GetMapping("/image/{mbti}")
    public ResponseEntity<FileSystemResource> getImage(@PathVariable String mbti) {
       try {
          Mbti mbtiData = mbtiRepository.findByMbti(mbti);
+         if (mbtiData == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+         }
 
-         String imageFilePath = "/home/ubuntu/cinepick-be/" +mbtiData.getProfileImage();
+         String basePath;
+
+         if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            basePath = "C:/Users/82104/IdeaProjects/cinepick-be/uploads/mbti/";
+         } else {
+            basePath = "/home/ubuntu/cinepick-be/uploads/mbti/";
+         }
+
+         String imageFilePath = basePath + mbtiData.getProfileImage();
          Path path = Paths.get(imageFilePath).toAbsolutePath();  // 절대 경로로 변환
 
-
-         System.out.println(path);
-         File imageFile = path.toFile();  // File 객체로 변환
+         System.out.println("Resolved Path: " + path);
+         File imageFile = path.toFile();
 
          if (imageFile.exists()) {
-            // 이미지의 확장자에 맞게 MediaType 설정
             String fileExtension = imageFile.getName().substring(imageFile.getName().lastIndexOf(".") + 1);
             MediaType mediaType = MediaType.IMAGE_PNG; // 기본값
 
-            // JPG 형식 처리
             if (fileExtension.equalsIgnoreCase("jpeg") || fileExtension.equalsIgnoreCase("jpg")) {
                mediaType = MediaType.IMAGE_JPEG;
             }
@@ -82,9 +90,9 @@ public class ImageFileController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
          }
       } catch (Exception e) {
-         // 에러가 발생한 경우
          e.printStackTrace();
          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
       }
    }
+
 }
