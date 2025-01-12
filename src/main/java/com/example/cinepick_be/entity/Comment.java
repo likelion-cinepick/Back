@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "comment")
 public class Comment {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)

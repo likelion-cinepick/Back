@@ -22,6 +22,7 @@ public class MovieService {
    private final CommentRepository commentRepository;
    private final RecommendRepository recommendRepository;
    private final GenreRepository genreRepository;
+   private final LikeRepository likeRepository;
 
    private final RestTemplate restTemplate;
 
@@ -106,7 +107,6 @@ public class MovieService {
       movieRepository.save(movie);
    }
 
-
    private String truncatePlot(String plot) {
       int maxLength = 10000;  // 최대 길이 설정
       if (plot != null && plot.length() > maxLength) {
@@ -153,7 +153,54 @@ public class MovieService {
             })
             .collect(Collectors.toList());
    }
+   @Transactional
+   public List<MovieDTO> getRecommendMovies(String userId){
+      User user = userRepository.findByUserId(userId)
+            .orElseThrow(()-> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+      List<String> preferredMood = user.getMoodList();
+      List<String> preferredGenres = genreRepository.findGenresByMoods(preferredMood);
+      List<Object[]> movies = movieRepository.findMoviesByGenres(preferredGenres);
+      return movies.stream()
+          .map(movie-> new MovieDTO(
+              (String) movie[0],
+              (String) movie[1]
+              )).collect(Collectors.toList());
+
+   }
+   @Transactional
+   public List<MovieDTO> getMainMovies(){
+      List<Object[]> movies = movieRepository.findMoviesByGenres("뮤지컬");
+
+      return movies.stream()
+            .map(movie-> new MovieDTO(
+                  (String) movie[0],
+                  (String) movie[1]
+            )).collect(Collectors.toList());
+
+   }
+
+   @Transactional
+   public List<MovieDTO> getMoviesByGenre(List<String> genre){
+      List<Object[]> movies = movieRepository.findMoviesByGenres(genre);
+
+      return movies.stream()
+            .map(movie -> new MovieDTO(
+                  (String) movie[0],
+                  (String) movie[1]
+            )).collect(Collectors.toList());
+   }
+
+   @Transactional
+   public List<MovieDTO> getRecentLikedMovies(String userId){
+      List<Object[]> movies = likeRepository.findRecentMoviesByUserId(userId);
+
+      return movies.stream()
+            .map(movie-> new MovieDTO(
+                  (String) movie[0],
+                  (String) movie[1]
+            )).collect(Collectors.toList());
+   }
    public MovieDetailResponseDTO getMovieDetails(Long movieId) {
       Movie movie = movieRepository.findById(movieId)
             .orElseThrow(() -> new RuntimeException("Movie not found with id " + movieId));

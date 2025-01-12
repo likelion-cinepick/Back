@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 
 src/main/resources/templates/index.html
-
+src/main/java/com/example/cinepick_be/service/TokenService.java
 ### STS ###
 .apt_generated
 .classpath

@@ -4,9 +4,11 @@ import com.example.cinepick_be.dto.MbtiDTO;
 import com.example.cinepick_be.dto.MbtiResultDTO;
 import com.example.cinepick_be.dto.UserDTO;
 import com.example.cinepick_be.entity.Mbti;
+import com.example.cinepick_be.entity.Question;
 import com.example.cinepick_be.entity.User;
 import com.example.cinepick_be.repository.MbtiRepository;
 import com.example.cinepick_be.repository.UserRepository;
+import com.example.cinepick_be.service.QuestionService;
 import com.example.cinepick_be.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 
 @RestController
@@ -38,6 +41,7 @@ public class MbtiController {
    private final UserService userService;
    private final UserRepository userRepository;
    private final MbtiRepository mbtiRepository;
+   private final QuestionService questionService;
 
    @PostMapping("/submit")
    public ResponseEntity<UserDTO> mbtiResult(@RequestBody MbtiResultDTO mbtiResultDTO){
@@ -51,6 +55,11 @@ public class MbtiController {
       return ResponseEntity.ok(user);
 
 
+   }
+
+   @GetMapping
+   public List<Question> getQuestion(){
+      return questionService.getAllQuestion();
    }
 
    @GetMapping("/result")

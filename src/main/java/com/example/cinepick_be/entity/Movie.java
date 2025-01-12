@@ -17,12 +17,14 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "movie")
 public class Movie {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)
    private Long id;
 
    private String title;
+
    private String imageUrl;
    @Lob
    private String plot;

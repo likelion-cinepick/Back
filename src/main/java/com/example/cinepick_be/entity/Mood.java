@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
+@Data@Table(name = "mood")
 public class Mood {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)

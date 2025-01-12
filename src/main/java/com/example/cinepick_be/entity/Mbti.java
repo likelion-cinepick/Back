@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Data
 @JsonIgnoreProperties({"goodChemistry", "badChemistry","recommend"})
+@Table(name = "mbti")
 public class Mbti {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)

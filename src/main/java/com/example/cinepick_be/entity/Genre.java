@@ -13,6 +13,7 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
+@Table(name = "genre")
 public class Genre {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -30,6 +31,8 @@ public class Genre {
    @JsonIgnoreProperties("genres")
    private List<Mood> moods = new ArrayList<>();
 
+   @ManyToMany(mappedBy = "genres")
+   private List<Movie> movies = new ArrayList<>();
    public Genre(String name) {
       this.name = name;
    }

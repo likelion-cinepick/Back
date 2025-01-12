@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "recommend")
 public class Recommend {
    @Id
    @GeneratedValue(strategy= GenerationType.IDENTITY)

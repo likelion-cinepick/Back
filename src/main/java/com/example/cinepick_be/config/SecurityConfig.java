@@ -51,6 +51,9 @@ public class SecurityConfig {
                         ,"/movies/all"
                         ,"/uploads/**"
                         ,"/movies/{movieId}"
+                        ,"/movies/recommend"
+                        ,"/movies/popular"
+                        ,"/movies/liked"
                   ).permitAll()
                   .anyRequest().authenticated()
             )

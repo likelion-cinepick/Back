@@ -7,11 +7,14 @@ import com.example.cinepick_be.entity.Movie;
 import com.example.cinepick_be.entity.User;
 import com.example.cinepick_be.service.LikeService;
 import com.example.cinepick_be.service.MovieService;
+import com.example.cinepick_be.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,7 @@ public class MovieController {
 
    private final MovieService movieService;
    private final LikeService likeService;
+   private final TokenService tokenService;
 
    @PostMapping("/fetch")
    public ResponseEntity<String> fetchMovies() {
@@ -40,6 +44,65 @@ public class MovieController {
       List<MovieDTO> movies = movieService.getAllMovies();
       return ResponseEntity.ok(movies);
    }
+
+   @GetMapping("/recommend")
+   public ResponseEntity<List<MovieDTO>> getRecommendMovies(){
+      Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+      String userId = null;
+
+      if (principal instanceof UserDetails) {
+         userId = ((UserDetails) principal).getUsername();  // UserDetails에서 사용자 ID를 가져옴
+      } else if (principal instanceof String) {
+         String principalStr = (String) principal;
+         //로그인 유무 확인
+         if ("anonymousUser".equals(principalStr)) {
+            userId= null;
+         }else{
+            userId = principalStr;
+         }
+      }
+      List<MovieDTO> movies;
+      if(userId == null){
+         movies = movieService.getAllMovies();}
+      else {
+         movies = movieService.getRecommendMovies(userId);
+      }
+      return ResponseEntity.ok(movies);
+   }
+
+   @GetMapping("/popular")
+   public ResponseEntity<List<MovieDTO>> getPopularMovies(@RequestParam List<String> genre){
+      List<MovieDTO> movies = movieService.getMoviesByGenre(genre);
+      return ResponseEntity.ok(movies);
+   }
+
+   @GetMapping("liked")
+   public ResponseEntity<List<MovieDTO>> getRecentLikedMovies(){
+      Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+      String userId = null;
+
+      if (principal instanceof UserDetails) {
+         userId = ((UserDetails) principal).getUsername();  // UserDetails에서 사용자 ID를 가져옴
+      } else if (principal instanceof String) {
+         String principalStr = (String) principal;
+         //로그인 유무 확인
+         if ("anonymousUser".equals(principalStr)) {
+            userId= null;
+         }else{
+            userId = principalStr;
+         }
+      }
+      List<MovieDTO> movies;
+      if(userId == null){
+         movies = movieService.getMainMovies();}
+      else {
+         movies = movieService.getRecentLikedMovies(userId);
+      }
+      return ResponseEntity.ok(movies);
+   }
+
    //영화 상세 페이지
    @GetMapping("/{movieId}")
    public ResponseEntity<MovieDetailResponseDTO> getMovieById(@PathVariable Long movieId) {
