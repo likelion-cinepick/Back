@@ -142,7 +142,10 @@ public class MovieService {
 
                // 이미지 URL을 절대 경로로 수정
                if (imageUrl != null && !imageUrl.isEmpty()) {
-                  imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
+                  imageUrl = imageUrl.toLowerCase();
+                  if (imageUrl.endsWith(".jpg")) {
+                     imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
+                  }
                }
 
                System.out.println("Title: " + title + ", Image URL: " + imageUrl);

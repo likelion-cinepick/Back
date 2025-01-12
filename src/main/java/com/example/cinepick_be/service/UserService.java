@@ -128,34 +128,4 @@ public class UserService implements UserDetailsService {
       return userDTO;
    }
 
-   public String getProfileImageUrl(String userId) {
-      // 사용자 정보를 DB에서 가져옴
-      Optional<User> user = userRepository.findByUserId(userId);
-
-      // MBTI에 맞는 이미지 경로 설정
-      String mbti = user.get().getMbti().getMbti();
-      String imageFileName = mbti.toLowerCase() + ".png";  // 예: enfp.png, intp.png 등
-      String imageUrl = Paths.get(imageDir, imageFileName).toString();
-
-      // 프로필 이미지 URL을 반환
-      return imageUrl;
-   }
-   public Mbti getMbtiByUserId(String userId) {
-      User user = userRepository.findByUserId(userId)
-            .orElseThrow(() -> new RuntimeException());
-
-
-      return user.getMbti();
-   }
-   public void updateProfileImage(String mbtiType, String imageUrl) {
-      // MBTI 타입에 해당하는 엔티티를 찾기
-      Mbti mbti = mbtiRepository.findByMbti(mbtiType);
-
-      // profile_image 필드에 URL 저장
-      mbti.setProfileImage(imageUrl);
-
-      // DB에 업데이트
-      mbtiRepository.save(mbti);
-   }
-
 }

@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Entity(name="movie_like")
 @Data
-public class Like {
+public class
+Like {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;

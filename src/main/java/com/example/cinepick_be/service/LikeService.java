@@ -32,7 +32,7 @@ public class LikeService {
 
       return likes.stream().map(like-> new LikeDTO(
               like.getUser().getUserId(),
-              like.getMovie().getId()
+              like.getMovie()
       )).collect(Collectors.toList());
    }
 
