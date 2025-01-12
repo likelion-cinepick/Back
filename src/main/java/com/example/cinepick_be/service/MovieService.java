@@ -1,5 +1,6 @@
 package com.example.cinepick_be.service;
 
+import com.example.cinepick_be.controller.ImageFileController;
 import com.example.cinepick_be.dto.*;
 import com.example.cinepick_be.entity.*;
 import com.example.cinepick_be.repository.*;
@@ -147,7 +148,7 @@ public class MovieService {
                      imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
                   }
                }
-
+//               imageUrl= ImageFileController.getBasePath(imageUrl);
                System.out.println("Title: " + title + ", Image URL: " + imageUrl);
                return new MovieDTO(title, imageUrl);
             })
@@ -161,10 +162,11 @@ public class MovieService {
       List<String> preferredMood = user.getMoodList();
       List<String> preferredGenres = genreRepository.findGenresByMoods(preferredMood);
       List<Object[]> movies = movieRepository.findMoviesByGenres(preferredGenres);
+
       return movies.stream()
           .map(movie-> new MovieDTO(
               (String) movie[0],
-              (String) movie[1]
+                ImageFileController.getBasePath((String) movie[1])
               )).collect(Collectors.toList());
 
    }
@@ -175,7 +177,7 @@ public class MovieService {
       return movies.stream()
             .map(movie-> new MovieDTO(
                   (String) movie[0],
-                  (String) movie[1]
+                  ImageFileController.getBasePath((String) movie[1])
             )).collect(Collectors.toList());
 
    }
@@ -187,7 +189,7 @@ public class MovieService {
       return movies.stream()
             .map(movie -> new MovieDTO(
                   (String) movie[0],
-                  (String) movie[1]
+                  ImageFileController.getBasePath((String) movie[1])
             )).collect(Collectors.toList());
    }
 
@@ -198,7 +200,7 @@ public class MovieService {
       return movies.stream()
             .map(movie-> new MovieDTO(
                   (String) movie[0],
-                  (String) movie[1]
+                  ImageFileController.getBasePath((String) movie[1])
             )).collect(Collectors.toList());
    }
    public MovieDetailResponseDTO getMovieDetails(Long movieId) {

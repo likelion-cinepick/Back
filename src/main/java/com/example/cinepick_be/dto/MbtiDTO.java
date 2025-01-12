@@ -39,8 +39,8 @@ public class MbtiDTO {
    @Lob
    private String story;
 
-   @JsonIgnore
-   private List<Movie> recommend = new ArrayList<>();
+
+   private List<MovieDTO> recommend = new ArrayList<>();
 
 
 }

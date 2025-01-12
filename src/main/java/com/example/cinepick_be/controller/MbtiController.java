@@ -2,6 +2,7 @@ package com.example.cinepick_be.controller;
 
 import com.example.cinepick_be.dto.MbtiDTO;
 import com.example.cinepick_be.dto.MbtiResultDTO;
+import com.example.cinepick_be.dto.MovieDTO;
 import com.example.cinepick_be.dto.UserDTO;
 import com.example.cinepick_be.entity.Mbti;
 import com.example.cinepick_be.entity.Question;
@@ -28,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -85,7 +87,12 @@ public class MbtiController {
 
       mbtiDTO.setGoodChemistry(mbti.getGoodChemistry().getMbti());
       mbtiDTO.setBadChemistry(mbti.getBadChemistry().getMbti());
-      mbtiDTO.setRecommend(mbti.getRecommend());
+      List<MovieDTO> recommendMovies= mbti.getRecommend().stream()
+                  .map(movie-> new MovieDTO(
+                        movie.getTitle(),
+                        movie.getImageUrl()
+                  )).collect(Collectors.toList());
+      mbtiDTO.setRecommend(recommendMovies);
 
       String imageFilePath = mbti.getProfileImage();
 

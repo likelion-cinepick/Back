@@ -42,8 +42,7 @@ public class Mbti {
    @Lob
    private String story;
 
-   @OneToMany
-   @JoinColumn(name = "mbti_id")
+   @OneToMany(mappedBy = "mbti", cascade = CascadeType.ALL,orphanRemoval = true)
    @JsonManagedReference
    private List<Movie> recommend = new ArrayList<>();
 

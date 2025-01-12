@@ -94,5 +94,14 @@ public class ImageFileController {
          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
       }
    }
-
+   // 이미지 URL을 절대 경로로 수정
+   public static String getBasePath(String imageUrl) {
+      if (imageUrl != null && !imageUrl.isEmpty()) {
+         imageUrl = imageUrl.toLowerCase();
+         if (imageUrl.endsWith(".jpg")) {
+            imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
+         }
+      }
+      return imageUrl;
+   }
 }
