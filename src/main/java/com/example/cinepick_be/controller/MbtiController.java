@@ -84,7 +84,7 @@ public class MbtiController {
       mbtiDTO.setDescription(mbti.getDescription());
       mbtiDTO.setStory(mbti.getStory());
 
-//      mbtiDTO.setProfileUrl("http://3.105.163.214:8080/uploads/mbti/" + mbti.getProfileImage());
+      mbtiDTO.setProfileUrl("http://3.105.163.214:8080/uploads/mbti/" + mbti.getProfileImage());
 //      mbtiDTO.setProfileUrl("http://localhost:8080/uploads/mbti/" + mbti.getProfileImage());
 
       mbtiDTO.setGoodChemistry(mbti.getGoodChemistry().getMbti());
