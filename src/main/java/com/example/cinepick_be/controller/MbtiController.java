@@ -31,6 +31,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.cinepick_be.controller.ImageFileController.getBasePath;
+
 
 @RestController
 @RequestMapping("/test")
@@ -82,7 +84,7 @@ public class MbtiController {
       mbtiDTO.setDescription(mbti.getDescription());
       mbtiDTO.setStory(mbti.getStory());
 
-      mbtiDTO.setProfileUrl("http://3.105.163.214:8080/uploads/mbti/" + mbti.getProfileImage());
+//      mbtiDTO.setProfileUrl("http://3.105.163.214:8080/uploads/mbti/" + mbti.getProfileImage());
 //      mbtiDTO.setProfileUrl("http://localhost:8080/uploads/mbti/" + mbti.getProfileImage());
 
       mbtiDTO.setGoodChemistry(mbti.getGoodChemistry().getMbti());
@@ -90,11 +92,9 @@ public class MbtiController {
       List<MovieDTO> recommendMovies= mbti.getRecommend().stream()
                   .map(movie-> new MovieDTO(
                         movie.getTitle(),
-                        movie.getImageUrl()
+                        getBasePath(movie.getImageUrl())
                   )).collect(Collectors.toList());
       mbtiDTO.setRecommend(recommendMovies);
-
-      String imageFilePath = mbti.getProfileImage();
 
       return ResponseEntity.ok(mbtiDTO);
    }
