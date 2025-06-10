@@ -9,13 +9,16 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
+    }
+    all {
+        exclude group: 'commons-logging', module: 'commons-logging'
     }
 }
 
@@ -44,7 +47,6 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     implementation 'org.json:json:20230227'
     implementation 'com.mashape.unirest:unirest-java:1.4.9'
-    implementation 'org.springframework.boot:spring-boot-starter-logging'
 }
 
 tasks.named('test') {
