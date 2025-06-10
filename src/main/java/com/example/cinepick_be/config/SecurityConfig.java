@@ -36,8 +36,6 @@ public class SecurityConfig {
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       http
               .csrf(csrf -> csrf.disable())
-              .cors() // CORS 활성화
-              .and()
               .authorizeHttpRequests(auth -> auth
                       .requestMatchers(
                               "/cinepick/my/**",
