@@ -34,6 +34,14 @@ jobs:
           target: "/home/ubuntu/deploy/"
           debug: true
 
+      - name: Set execute permission on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY }}
+          script: chmod 755 /home/ubuntu/deploy/cinepick_BE-0.0.1-SNAPSHOT.jar
+
       - name: Restart server
         uses: appleboy/ssh-action@master
         with:
