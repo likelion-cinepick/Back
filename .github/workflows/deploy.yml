@@ -37,7 +37,9 @@ jobs:
       - name: Restart server
         uses: appleboy/ssh-action@master
         with:
-          host: ...
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY }}
           script: |
             pkill -f 'java -jar' || true
             nohup java -jar ~/deploy/cinepick_BE-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
