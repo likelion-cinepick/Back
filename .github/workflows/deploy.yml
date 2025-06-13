@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET= ${{JWT_SECRET}
+      TMDB_TOKEN= ${{ secrets.TMDB_TOKEN }}
 
     steps:
       - name: Checkout code

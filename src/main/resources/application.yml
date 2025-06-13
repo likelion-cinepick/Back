@@ -35,6 +35,8 @@ logging.level.org.hibernate:
   type.descriptor.sql: TRACE
 
 jwt:
-  secret: qwieuoryuisdoahfjksldhfuqiowedasfdsagsahfsdahfdahjgdajdagdfasdf
+  secret: ${JWT_SECRET}
   expiration: 86400000
 
+tmdb:
+  token: ${TMDB_TOKEN}
