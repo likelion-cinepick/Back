@@ -23,7 +23,7 @@ public class LikeDTO {
       if (imageUrl != null && !imageUrl.isEmpty()) {
          imageUrl = imageUrl.toLowerCase();
          if (imageUrl.endsWith(".jpg")) {
-            imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
+            imageUrl = "http://52.78.3.251:8080/uploads/movies/" + imageUrl;
          }
       }
       this.movieDTO= new MovieDTO(movie.getTitle(),imageUrl);

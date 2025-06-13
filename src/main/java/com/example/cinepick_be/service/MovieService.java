@@ -145,7 +145,7 @@ public class MovieService {
                if (imageUrl != null && !imageUrl.isEmpty()) {
                   imageUrl = imageUrl.toLowerCase();
                   if (imageUrl.endsWith(".jpg")) {
-                     imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
+                     imageUrl = "http://52.78.3.251:8080/uploads/movies/" + imageUrl;
                   }
                }
 //               imageUrl= ImageFileController.getBasePath(imageUrl);
@@ -221,7 +221,7 @@ public class MovieService {
       if (genresString.length() > 0) {
          genresString.setLength(genresString.length() - 2);  // 마지막 쉼표와 공백 제거
       }
-      String imageUrl = "http://3.105.163.214:8080/uploads/movies/" + movie.getImageUrl();
+      String imageUrl = "http://52.78.3.251:8080/uploads/movies/" + movie.getImageUrl();
 
       MovieDTO movieDTO= new MovieDTO(
             movie.getTitle(),

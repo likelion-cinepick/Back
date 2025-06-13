@@ -51,7 +51,8 @@ public class ImageFileController {
 //   }
    @Autowired
    private MbtiRepository mbtiRepository;
-   @CrossOrigin(origins = "http://3.105.163.214:3000")
+
+   @CrossOrigin(origins = "http://52.78.3.251:3000")
    @GetMapping("/image/{mbti}")
    public ResponseEntity<FileSystemResource> getImage(@PathVariable String mbti) {
       try {
@@ -99,7 +100,7 @@ public class ImageFileController {
       if (imageUrl != null && !imageUrl.isEmpty()) {
          imageUrl = imageUrl.toLowerCase();
          if (imageUrl.endsWith(".jpg")) {
-            imageUrl = "http://3.105.163.214:8080/uploads/movies/" + imageUrl;
+            imageUrl = "http://52.78.3.251:8080/uploads/movies/" + imageUrl;
          }
       }
       return imageUrl;
