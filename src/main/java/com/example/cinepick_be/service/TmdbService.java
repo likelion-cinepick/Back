@@ -31,16 +31,16 @@ public class TmdbService {
    }
 
    // TMDB 영화 전체 조회
-   public void getMovies() {
+   public ResponseEntity<String> getMovies() {
       String url = "https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1";
       ResponseEntity<String> response =getHeader(url);
 
       System.out.println(response);
-
+      return response;
    }
 
    // TMDB 영화 찾기
-   public void searchMovie(String keyword){
+   public ResponseEntity<String> searchMovie(String keyword){
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/search/movie")
             .queryParam("query", keyword)
             .queryParam("language","ko-KR")
@@ -48,15 +48,21 @@ public class TmdbService {
 
       ResponseEntity<String> response =getHeader(url);
 
+      return response;
+
    }
 
    // TMDB 영화 필터링
-   public void filterMovie(List<Integer> genres){
+   public ResponseEntity<String> filterMovie(List<Integer> genres){
       String genre = genres.stream().map(String::valueOf).collect(Collectors.joining(","));
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/discover/movie")
             .queryParam("with_genres",genre)
             .queryParam("language","ko-KR")
             .toUriString();
+
+      ResponseEntity<String> response =getHeader(url);
+
+      return response;
    }
 
 }
