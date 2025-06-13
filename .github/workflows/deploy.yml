@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
           source: "build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar"
-          target: "/home/ubuntu/deploy/"
+          target: "/home/ubuntu/deploy/build/libs/"
           debug: true
 
       - name: Set execute permission on server
@@ -40,7 +40,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
-          script: chmod 755 /home/ubuntu/deploy/cinepick_BE-0.0.1-SNAPSHOT.jar
+          script: chmod 755 /home/ubuntu/deploy/build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar
 
       - name: Restart server
         uses: appleboy/ssh-action@master
