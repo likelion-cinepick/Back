@@ -22,6 +22,11 @@ public class Genre {
    @Column(unique = true)
    private String name;
 
+
+   @ManyToMany(mappedBy="genres")
+   private List<Mbti> mbtis= new ArrayList<>();
+
+
    @ManyToMany(fetch = FetchType.EAGER)
    @JoinTable(
            name="genre_mood",
@@ -33,6 +38,7 @@ public class Genre {
 
    @ManyToMany(mappedBy = "genres")
    private List<Movie> movies = new ArrayList<>();
+
    public Genre(String name) {
       this.name = name;
    }

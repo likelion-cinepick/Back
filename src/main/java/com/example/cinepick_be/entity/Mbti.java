@@ -46,4 +46,12 @@ public class Mbti {
    @JsonManagedReference
    private List<Movie> recommend = new ArrayList<>();
 
+   @ManyToMany(fetch= FetchType.EAGER)
+   @JoinTable(
+         name = "mbti_genre",
+         joinColumns = @JoinColumn(name = "mbti_id"),
+         inverseJoinColumns = @JoinColumn(name = "genre_id")
+   )
+   private List<Genre> genres = new ArrayList<>();
+
 }

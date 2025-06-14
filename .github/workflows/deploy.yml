@@ -8,7 +8,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      JWT_SECRET: ${{ secrets.JWT_SECRET}}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
       TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
 
     steps:
