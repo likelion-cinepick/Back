@@ -30,6 +30,7 @@ public class TmdbController {
    @GetMapping("/movies/personal")
    public ResponseEntity<String> getRecommendMovies(@AuthenticationPrincipal UserDetails userDetails){
       ResponseEntity<String> response = tmdbService.getRecommendMovies(userDetails.getUsername());
+      return response;
    }
 
    // 영화 검색

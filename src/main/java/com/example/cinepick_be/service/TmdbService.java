@@ -1,6 +1,8 @@
 package com.example.cinepick_be.service;
 
+import com.example.cinepick_be.entity.Genre;
 import com.example.cinepick_be.entity.User;
+import com.example.cinepick_be.repository.MbtiRepository;
 import com.example.cinepick_be.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -19,17 +21,19 @@ import java.util.stream.Collectors;
 public class TmdbService {
 
    private final UserRepository userRepository;
+   private final MbtiRepository mbtiRepository;
    @Value("${tmdb.token}")
    private String tmdbToken;
 
-   public TmdbService(UserRepository userRepository) {
+   public TmdbService(UserRepository userRepository, MbtiRepository mbtiRepository) {
       this.userRepository = userRepository;
+      this.mbtiRepository = mbtiRepository;
    }
 
    // TMDB 헤더
-   public ResponseEntity<String> getHeader(String url){
-      HttpHeaders headers= new HttpHeaders();
-      headers.set("Authorization","Bearer "+tmdbToken);
+   public ResponseEntity<String> getHeader(String url) {
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "Bearer " + tmdbToken);
 
       HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -42,48 +46,58 @@ public class TmdbService {
    public ResponseEntity<String> getMovies() {
 
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/trending/movie/week")
-            .queryParam("language","ko-KR")
-            .toUriString();
-      ResponseEntity<String> response =getHeader(url);
+              .queryParam("language", "ko-KR")
+              .toUriString();
+      ResponseEntity<String> response = getHeader(url);
 
       System.out.println(response);
       return response;
    }
 
    // TMDB 영화 성향 별 조회
-   public ResponseEntity<String> getRecommendMovies(String username){
+   public ResponseEntity<String> getRecommendMovies(String username) {
 
       User user = userRepository.findByUserId(username)
-            .orElseThrow(() -> new AccessDeniedException(""));
-      List<Integer> userGenres ;
-                  String uri = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/discover/movie")
-                        .queryParam("with_genres",genre)
-                        .queryParam("language","ko-KR")
+              .orElseThrow(() -> new AccessDeniedException(""));
+
+      String mbti = user.getMbti().getMbti();
+
+      List<Genre> userGenres = mbtiRepository.findGenresByMbtiId(mbti);
+
+      String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/discover/movie")
+              .queryParam("with_genres", userGenres.stream()
+                      .map(genre->String.valueOf(genre.getId()))
+                      .collect(Collectors.joining(",")))
+              .queryParam("language", "ko-KR")
+              .toUriString();
+
+      ResponseEntity<String> response = getHeader(url);
+      return response;
    }
 
 
    // TMDB 영화 찾기
-   public ResponseEntity<String> searchMovie(String keyword){
+   public ResponseEntity<String> searchMovie(String keyword) {
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/search/movie")
-            .queryParam("query", keyword)
-            .queryParam("language","ko-KR")
-            .toUriString();
+              .queryParam("query", keyword)
+              .queryParam("language", "ko-KR")
+              .toUriString();
 
-      ResponseEntity<String> response =getHeader(url);
+      ResponseEntity<String> response = getHeader(url);
 
       return response;
 
    }
 
    // TMDB 영화 필터링
-   public ResponseEntity<String> filterMovie(List<Integer> genres){
+   public ResponseEntity<String> filterMovie(List<Integer> genres) {
       String genre = genres.stream().map(String::valueOf).collect(Collectors.joining(","));
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/discover/movie")
-            .queryParam("with_genres",genre)
-            .queryParam("language","ko-KR")
-            .toUriString();
+              .queryParam("with_genres", genre)
+              .queryParam("language", "ko-KR")
+              .toUriString();
 
-      ResponseEntity<String> response =getHeader(url);
+      ResponseEntity<String> response = getHeader(url);
 
       return response;
    }

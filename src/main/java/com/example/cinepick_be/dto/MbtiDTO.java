@@ -42,5 +42,6 @@ public class MbtiDTO {
 
    private List<MovieDTO> recommend = new ArrayList<>();
 
+   private List<GenreDTO> genres = new ArrayList<>();
 
 }
